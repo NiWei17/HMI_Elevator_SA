@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gui.EventHandler">
+            fx:controller="gui.MainWindowEventHandler">
    <Button layoutX="450.0" layoutY="106.0" mnemonicParsing="false" onAction="#onResetClicked" prefHeight="26.0"
            prefWidth="75.0" text="Reset"/>
    <Button layoutX="262.0" layoutY="107.0" mnemonicParsing="false" onAction="#onCloseDoorClicked" text="Close Door"/>
