@@ -18,7 +18,7 @@ import model.ElevatorState;
  * displayed in the UI. All UI changes are executed on the JavaFX
  * Application Thread.</p>
  */
-public class UIUpdateService {
+public class UiUpdateService {
 
     /**
      * Interval in which the UI is refreshed.

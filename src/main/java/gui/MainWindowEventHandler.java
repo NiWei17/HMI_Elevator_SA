@@ -1,4 +1,4 @@
 package gui;
 
-public class EventHandler {
+public class MainWindowEventHandler {
 }
