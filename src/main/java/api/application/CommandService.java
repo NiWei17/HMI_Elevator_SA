@@ -1,6 +1,6 @@
 package api.application;
 
-import api.basic.HmiWebSocketClient;
+import api.basic.WebSocketClient;
 
 /**
  * Service responsible for sending elevator control commands
@@ -15,14 +15,14 @@ import api.basic.HmiWebSocketClient;
  */
 public class CommandService {
 
-    private final HmiWebSocketClient client;
+    private final WebSocketClient client;
 
     /**
      * Creates a new CommandService instance.
      *
      * @param client the WebSocket client used for communication with the control system
      */
-    public CommandService(HmiWebSocketClient client) {
+    public CommandService(WebSocketClient client) {
         this.client = client;
     }
 

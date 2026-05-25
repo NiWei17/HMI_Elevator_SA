@@ -1,6 +1,6 @@
 package api.application;
 
-import api.basic.HmiWebSocketClient;
+import api.basic.WebSocketClient;
 import model.ElevatorState;
 
 /**
@@ -12,7 +12,7 @@ import model.ElevatorState;
  */
 public class StatusService {
 
-    private final HmiWebSocketClient client;
+    private final WebSocketClient client;
 
     private ElevatorState currentStatus;
 
@@ -21,7 +21,7 @@ public class StatusService {
      *
      * @param client the WebSocket client used for communication
      */
-    public StatusService(HmiWebSocketClient client) {
+    public StatusService(WebSocketClient client) {
         this.client = client;
     }
 
