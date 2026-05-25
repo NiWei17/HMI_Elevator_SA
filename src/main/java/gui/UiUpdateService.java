@@ -1,5 +1,5 @@
 package gui;
 
-public class UIUpdateService
+public class UiUpdateService
 {
 }
