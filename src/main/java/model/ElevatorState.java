@@ -1,4 +1,4 @@
 package model;
 
-public class ElevatorStatus {
+public class ElevatorState {
 }
