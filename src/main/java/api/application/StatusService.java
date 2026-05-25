@@ -14,7 +14,7 @@ public class StatusService {
 
     private final WebSocketClient client;
 
-    private ElevatorState currentStatus;
+    private volatile ElevatorState currentStatus;
 
     /**
      * Creates a new StatusService instance.
@@ -32,7 +32,7 @@ public class StatusService {
         String jsonMessage =
                 JsonMessageFactory.createCommand("REQUEST_STATUS");
 
-        client.send(jsonMessage);
+        client.sendMessage(jsonMessage);
     }
 
     /**

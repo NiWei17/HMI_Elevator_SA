@@ -63,6 +63,6 @@ public class CommandService {
      */
     private void sendCommand(String command) {
         String jsonMessage = JsonMessageFactory.createCommand(command);
-        client.send(jsonMessage);
+        client.sendMessage(jsonMessage);
     }
 }
