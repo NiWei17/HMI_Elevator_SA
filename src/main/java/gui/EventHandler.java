@@ -1,5 +1,4 @@
 package gui;
 
-public class MainController
-{
+public class EventHandler {
 }
