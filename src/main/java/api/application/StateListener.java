@@ -13,5 +13,5 @@ public interface StateListener {
      *
      * @param elevatorState the latest elevator state
      */
-    void onStateUpdated(ElevatorState elevatorState);
+    void stateUpdated(ElevatorState elevatorState);
 }

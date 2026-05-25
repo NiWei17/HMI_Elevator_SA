@@ -46,7 +46,7 @@ public class UiUpdateService implements StateListener {
     }
 
     @Override
-    public void onStateUpdated(ElevatorState elevatorState) {
+    public void stateUpdated(ElevatorState elevatorState) {
         Platform.runLater(() -> applyState(elevatorState));
     }
 

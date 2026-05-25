@@ -1,7 +1,5 @@
 package api.application;
 
-import api.basic.WebSocketClient;
-
 /**
  * Service responsible for sending elevator control commands
  * to the remote control system.
@@ -15,15 +13,15 @@ import api.basic.WebSocketClient;
  */
 public class CommandService {
 
-    private final WebSocketClient client;
+    private final WebSocketSender sender;
 
     /**
      * Creates a new CommandService instance.
      *
-     * @param client the WebSocket client used for communication with the control system
+     * @param sender sender used for communication with the control system
      */
-    public CommandService(WebSocketClient client) {
-        this.client = client;
+    public CommandService(WebSocketSender sender) {
+        this.sender = sender;
     }
 
     /**
@@ -63,6 +61,6 @@ public class CommandService {
      */
     private void sendCommand(String command) {
         String jsonMessage = JsonMessageFactory.createCommand(command);
-        client.sendMessage(jsonMessage);
+        sender.sendMessage(jsonMessage);
     }
 }

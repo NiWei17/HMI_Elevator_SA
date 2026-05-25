@@ -1,6 +1,7 @@
 package gui;
 
 import api.application.CommandService;
+import api.application.StatePollingService;
 import api.application.StateService;
 import api.application.WebSocketHandler;
 import api.basic.WebSocketClient;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main entry point of the Elevator HMI application.
@@ -18,15 +20,13 @@ import java.net.URI;
  * initializes the application services and connects
  * the GUI with the WebSocket API.
  */
-
 public class HmiApplication extends Application {
 
     private static final String SERVER_URI = "ws://localhost:8888";
     private static final String FXML_PATH = "/fxml/main-window.fxml";
 
     private WebSocketClient webSocketClient;
-    private StateService stateService;
-public class HmiApplication extends Application {
+    private StatePollingService statePollingService;
 
     /**
      * Application entry point.
@@ -36,10 +36,6 @@ public class HmiApplication extends Application {
     public static void main(String[] args) {
         launchGui(args);
     }
-
-
-
-
 
     /**
      * Starts the JavaFX application lifecycle.
@@ -54,23 +50,41 @@ public class HmiApplication extends Application {
      * Initializes and displays the main application window.
      *
      * @param stage primary application stage
+     * @throws Exception if the UI or WebSocket initialization fails
      */
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws Exception {
+        StateService stateService = new StateService();
+        WebSocketHandler webSocketHandler = new WebSocketHandler(stateService);
 
-        Label label = new Label("Elevator HMI started");
+        webSocketClient = new WebSocketClient(
+                new URI(SERVER_URI),
+                webSocketHandler
+        );
 
-        Scene scene = new Scene(label, 400, 300);
+        CommandService commandService = new CommandService(webSocketClient);
+        statePollingService = new StatePollingService(webSocketClient);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH));
+        Scene scene = new Scene(loader.load());
+
+        MainWindowEventHandler controller = loader.getController();
+        controller.setCommandService(commandService);
+        controller.setStateService(stateService);
 
         stage.setTitle("Elevator HMI");
         stage.setScene(scene);
         stage.show();
+
+        if (webSocketClient.connectBlocking(5, TimeUnit.SECONDS)) {
+            statePollingService.startPolling();
+        }
     }
 
     @Override
     public void stop() {
-        if (stateService != null) {
-            stateService.shutdown();
+        if (statePollingService != null) {
+            statePollingService.shutdown();
         }
 
         if (webSocketClient != null) {
