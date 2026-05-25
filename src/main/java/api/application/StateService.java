@@ -6,8 +6,6 @@ import model.ElevatorState;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Service responsible for requesting and managing
@@ -30,7 +28,7 @@ public class StateService {
     /** Most recently received elevator state */
     private volatile ElevatorState currentState;
 
-    private StateListener stateListener;
+    private volatile StateListener stateListener;
 
     /**
      * Creates a new StateService instance.

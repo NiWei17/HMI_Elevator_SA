@@ -61,20 +61,18 @@ public class WebSocketHandler {
      */
     public void onMessage(String rawJson) {
         try {
-
             if (JsonMessageParser.isError(rawJson)) {
                 onError(JsonMessageParser.parseErrorMessage(rawJson));
                 return;
             }
-
             if (JsonMessageParser.isStateMessage(rawJson)) {
-
-                ElevatorState elevatorState =
-                        JsonMessageParser.parseState(rawJson);
-
+                ElevatorState elevatorState = JsonMessageParser.parseState(rawJson);
                 stateService.updateState(elevatorState);
+                return;
             }
-
+            if (JsonMessageParser.isSuccess(rawJson)) {
+                return;
+            }
         } catch (Exception e) {
             onError(e.getMessage());
         }
