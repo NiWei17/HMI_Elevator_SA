@@ -15,7 +15,11 @@
     </properties>
 
     <dependencies>
-        <!-- JSON processing library for handling WebSocket messages -->
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.6</version>
+        </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
