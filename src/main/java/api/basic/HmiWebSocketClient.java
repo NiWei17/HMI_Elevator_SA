@@ -1,4 +1,4 @@
-package API.basic;
+package api.basic;
 
 public class HmiWebSocketClient {
 }
