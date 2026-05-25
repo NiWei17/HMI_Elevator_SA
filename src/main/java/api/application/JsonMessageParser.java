@@ -9,12 +9,12 @@ import org.json.JSONObject;
  * received from the elevator control system.
  *
  * This class converts raw JSON responses into Java objects
- * such as ElevatorStatus instances.
+ * such as ElevatorState instances.
  *
  * Supported message formats:
- * - Status messages: Contains doorOpened, doorClosed, motorReady, motorOn, motorError, cycles, id
- * - Success responses: status field set to "OK"
- * - Error responses: status field set to "ERROR" with optional error message
+ * - State messages: Contains doorOpened, doorClosed, motorReady, motorOn, motorError, cycles, id
+ * - Success responses: state field set to "OK"
+ * - Error responses: state field set to "ERROR" with optional error message
  */
 public final class JsonMessageParser {
 
@@ -27,12 +27,12 @@ public final class JsonMessageParser {
      * Looks for a "status" field (in header or root) with value "OK".
      *
      * @param rawJson the JSON response string from the control system
-     * @return true if the response status is "OK"
+     * @return true if the response state is "OK"
      * @throws JSONException if the JSON is malformed
      */
     public static boolean isSuccess(String rawJson) {
         try {
-            return "OK".equalsIgnoreCase(getStateValue(rawJson));
+            return "OK".equalsIgnoreCase(getStatusValue(rawJson));
         } catch (JSONException e) {
             return false;
         }
@@ -44,12 +44,12 @@ public final class JsonMessageParser {
      * Looks for a "status" field (in header or root) with value "ERROR".
      *
      * @param rawJson the JSON response string from the control system
-     * @return true if the response status is "ERROR"
+     * @return true if the response state is "ERROR"
      * @throws JSONException if the JSON is malformed
      */
     public static boolean isError(String rawJson) {
         try {
-            return "ERROR".equalsIgnoreCase(getStateValue(rawJson));
+            return "ERROR".equalsIgnoreCase(getStatusValue(rawJson));
         } catch (JSONException e) {
             return false;
         }
@@ -58,16 +58,23 @@ public final class JsonMessageParser {
     /**
      * Extracts the status field value from the JSON message.
      *
-     * Checks for status in header first, then in root.
+     * Checks for the status field in the header first,
+     * then in the root object.
      *
      * @param rawJson the JSON response string
-     * @return the status value (e.g., "OK", "ERROR"), or empty string if not found
+     * @return the status value (e.g. "OK", "ERROR"),
+     *         or empty string if not found
      */
-    private static String getStateValue(String rawJson) {
+    private static String getStatusValue(String rawJson) {
+
         JSONObject root = new JSONObject(rawJson);
 
         if (root.has("header")) {
-            String headerStatus = root.getJSONObject("header").optString("status");
+
+            String headerStatus =
+                    root.getJSONObject("header")
+                            .optString("status");
+
             if (!headerStatus.isEmpty()) {
                 return headerStatus;
             }
@@ -99,46 +106,46 @@ public final class JsonMessageParser {
     }
 
     /**
-     * Checks if the message is a status update from the control system.
+     * Checks if the message is a state update from the control system.
      *
-     * A valid status message must contain all required elevator state fields:
+     * A valid state message must contain all required elevator state fields:
      * doorOpened, doorClosed, motorReady, motorOn, motorError, cycles, id
      *
      * @param rawJson the JSON message string
-     * @return true if the message contains all required status fields
+     * @return true if the message contains all required state fields
      * @throws JSONException if the JSON is malformed
      */
-    public static boolean isStatusMessage(String rawJson) {
+    public static boolean isStateMessage(String rawJson) {
         try {
             JSONObject root = new JSONObject(rawJson);
 
-            // Check if header indicates status message
+            // Check if header indicates state message
             if (root.has("header")) {
                 if ("STATUS".equalsIgnoreCase(root.getJSONObject("header").optString("type"))) {
                     return true;
                 }
             }
 
-            // Fallback: check for required status fields in root or payload
-            JSONObject statusData = root;
+            // Fallback: check for required state fields in root or payload
+            JSONObject stateData = root;
             if (root.has("payload")) {
-                statusData = root.getJSONObject("payload");
+                stateData = root.getJSONObject("payload");
             }
 
-            return statusData.has("doorOpened")
-                    && statusData.has("doorClosed")
-                    && statusData.has("motorReady")
-                    && statusData.has("motorOn")
-                    && statusData.has("motorError")
-                    && statusData.has("cycles")
-                    && statusData.has("id");
+            return stateData.has("doorOpened")
+                    && stateData.has("doorClosed")
+                    && stateData.has("motorReady")
+                    && stateData.has("motorOn")
+                    && stateData.has("motorError")
+                    && stateData.has("cycles")
+                    && stateData.has("id");
         } catch (JSONException e) {
             return false;
         }
     }
 
     /**
-     * Parses a status message into an ElevatorState object.
+     * Parses a state message into an ElevatorState object.
      *
      * Expected structure (in payload or root):
      * {
@@ -151,32 +158,32 @@ public final class JsonMessageParser {
      *   "id": integer
      * }
      *
-     * @param rawJson the JSON status message string
-     * @return an ElevatorStatus object with the parsed values
+     * @param rawJson the JSON state message string
+     * @return an ElevatorState object with the parsed values
      * @throws IllegalArgumentException if the message format is invalid or required fields are missing
      */
     public static ElevatorState parseState(String rawJson) {
         try {
             JSONObject root = new JSONObject(rawJson);
 
-            JSONObject statusData;
+            JSONObject stateData;
             if (root.has("payload")) {
-                statusData = root.getJSONObject("payload");
+                stateData = root.getJSONObject("payload");
             } else {
-                statusData = root;
+                stateData = root;
             }
 
             return new ElevatorState(
-                    statusData.getBoolean("doorOpened"),
-                    statusData.getBoolean("doorClosed"),
-                    statusData.getBoolean("motorReady"),
-                    statusData.getBoolean("motorOn"),
-                    statusData.getBoolean("motorError"),
-                    statusData.getInt("cycles"),
-                    statusData.getInt("id")
+                    stateData.getBoolean("doorOpened"),
+                    stateData.getBoolean("doorClosed"),
+                    stateData.getBoolean("motorReady"),
+                    stateData.getBoolean("motorOn"),
+                    stateData.getBoolean("motorError"),
+                    stateData.getInt("cycles"),
+                    stateData.getInt("id")
             );
         } catch (JSONException e) {
-            throw new IllegalArgumentException("Invalid status message format: " + rawJson, e);
+            throw new IllegalArgumentException("Invalid state message format: " + rawJson, e);
         }
     }
 }
