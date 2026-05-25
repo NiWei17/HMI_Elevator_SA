@@ -46,7 +46,7 @@
                 <version>0.0.8</version>
 
                 <configuration>
-                    <mainClass>gui.MainWindow</mainClass>
+                    <mainClass>gui.HmiApplication</mainClass>
                 </configuration>
             </plugin>
 
