@@ -2,6 +2,8 @@ package gui;
 
 import api.application.CommandService;
 import javafx.fxml.FXML;
+import api.application.StateService;
+import javafx.scene.shape.Circle;
 
 /**
  * Handles user interactions from the main window.
@@ -12,6 +14,11 @@ import javafx.fxml.FXML;
 public class MainWindowEventHandler {
 
     private CommandService commandService;
+
+    @FXML private Circle doorStateOpened;
+    @FXML private Circle doorStateClosed;
+    @FXML private Circle motorStateReady;
+    @FXML private Circle motorStateOn;
 
     /**
      * Sets the service used to send commands to the elevator control system.
@@ -50,5 +57,21 @@ public class MainWindowEventHandler {
         if (commandService != null) {
             commandService.reset();
         }
+    }
+
+     /**
+     * Sets the service used to receive elevator state updates.
+     *
+     * @param stateService the state service used for receiving elevator states
+     */
+    public void setStateService(StateService stateService) {
+        UiUpdateService uiUpdateService = new UiUpdateService(
+                doorStateOpened,
+                doorStateClosed,
+                motorStateReady,
+                motorStateOn
+        );
+
+        stateService.setStateListener(uiUpdateService);
     }
 }

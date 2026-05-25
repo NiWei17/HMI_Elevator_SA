@@ -38,12 +38,12 @@
           text="Motor Ready"/>
    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="450.0" layoutY="282.0" prefHeight="26.0" prefWidth="75.0"
           text="Motor On"/>
-   <Circle id="doorStateOpened" fill="#ff1f1f" layoutX="300.0" layoutY="241.0" radius="22.0" stroke="BLACK"
+   <Circle fx:id="doorStateOpened" fill="#ff1f1f" layoutX="300.0" layoutY="241.0" radius="22.0" stroke="BLACK"
            strokeType="INSIDE"/>
-   <Circle id="doorStateClosed" fill="#ff261f" layoutX="488.0" layoutY="241.0" radius="22.0" stroke="BLACK"
+   <Circle fx:id="doorStateClosed" fill="#ff261f" layoutX="488.0" layoutY="241.0" radius="22.0" stroke="BLACK"
            strokeType="INSIDE"/>
-   <Circle id="motorStateReady" fill="#ff1f1f" layoutX="300.0" layoutY="330.0" radius="22.0" stroke="BLACK"
+   <Circle fx:id="motorStateReady" fill="#ff1f1f" layoutX="300.0" layoutY="330.0" radius="22.0" stroke="BLACK"
            strokeType="INSIDE"/>
-   <Circle id="motorStateOn" fill="#ff1f1f" layoutX="488.0" layoutY="330.0" radius="22.0" stroke="BLACK"
+   <Circle fx:id="motorStateOn" fill="#ff1f1f" layoutX="488.0" layoutY="330.0" radius="22.0" stroke="BLACK"
            strokeType="INSIDE"/>
 </AnchorPane>

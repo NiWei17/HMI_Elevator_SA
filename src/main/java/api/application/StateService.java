@@ -28,6 +28,8 @@ public class StateService {
     /** Most recently received elevator state */
     private volatile ElevatorState currentState;
 
+    private volatile StateListener stateListener;
+
     /**
      * Creates a new StateService instance.
      *
@@ -84,6 +86,10 @@ public class StateService {
      */
     public void updateState(ElevatorState elevatorState) {
         this.currentState = elevatorState;
+
+        if (stateListener != null) {
+            stateListener.onStateUpdated(elevatorState);
+        }
     }
 
     /**
@@ -105,5 +111,14 @@ public class StateService {
      */
     public boolean hasState() {
         return currentState != null;
+    }
+
+    /**
+     * Registers the listener that is notified when a new elevator state is received.
+     *
+     * @param stateListener the listener to register
+     */
+    public void setStateListener(StateListener stateListener) {
+        this.stateListener = stateListener;
     }
 }
