@@ -5,15 +5,29 @@ import model.ElevatorState;
 /**
  * Handler for WebSocket events from the elevator control system.
  *
- * This class processes incoming messages from the WebSocket connection,
- * parses them using {@link JsonMessageParser}, and manages the current
- * elevator state. It also handles connection lifecycle events (connect/disconnect)
- * and errors.
+ * This class processes incoming messages received via the WebSocket
+ * connection and delegates state management to the {@link StateService}.
+ *
+ * Responsibilities:
+ * - Handle WebSocket connection lifecycle events
+ * - Process incoming JSON messages
+ * - Parse elevator state updates using {@link JsonMessageParser}
+ * - Forward parsed {@link ElevatorState} objects to the {@link StateService}
+ * - Handle and report communication errors
  */
 public class WebSocketHandler {
 
-    /** The current elevator state received from the control system */
-    private ElevatorState elevatorState;
+    /** Service responsible for storing and providing the current elevator state */
+    private final StateService stateService;
+
+    /**
+     * Creates a new WebSocketHandler instance.
+     *
+     * @param stateService the service responsible for managing elevator states
+     */
+    public WebSocketHandler(StateService stateService) {
+        this.stateService = stateService;
+    }
 
     /**
      * Called when the WebSocket connection is successfully established.
@@ -27,9 +41,10 @@ public class WebSocketHandler {
     /**
      * Called when the WebSocket connection is closed.
      *
-     * @param code the close code from the WebSocket protocol
+     * @param code the WebSocket close code
      * @param reason the reason for closing the connection
-     * @param remote true if the close was initiated by the remote server, false if by the client
+     * @param remote true if the connection was closed by the remote server,
+     *               false if closed locally
      */
     public void onDisconnected(int code, String reason, boolean remote) {
         System.out.println("Disconnected: Code=" + code + ", Reason=" + reason);
@@ -38,10 +53,11 @@ public class WebSocketHandler {
     /**
      * Called when a message is received from the WebSocket connection.
      *
-     * Parses the incoming JSON message. If it's an error message, it calls
-     * {@link #onError(String)}. If it's a status message, updates {@link #elevatorState}.
+     * Error messages are forwarded to {@link #onError(String)}.
+     * State messages are parsed into {@link ElevatorState} objects
+     * and forwarded to the {@link StateService}.
      *
-     * @param rawJson the JSON message received from the control system
+     * @param rawJson the raw JSON message received from the control system
      */
     public void onMessage(String rawJson) {
         try {
@@ -49,8 +65,13 @@ public class WebSocketHandler {
                 onError(JsonMessageParser.parseErrorMessage(rawJson));
                 return;
             }
-            if (JsonMessageParser.isStatusMessage(rawJson)) {
-                elevatorState = JsonMessageParser.parseState(rawJson);
+            if (JsonMessageParser.isStateMessage(rawJson)) {
+                ElevatorState elevatorState = JsonMessageParser.parseState(rawJson);
+                stateService.updateState(elevatorState);
+                return;
+            }
+            if (JsonMessageParser.isSuccess(rawJson)) {
+                return;
             }
         } catch (Exception e) {
             onError(e.getMessage());
@@ -58,22 +79,14 @@ public class WebSocketHandler {
     }
 
     /**
-     * Called when an error occurs on the WebSocket connection.
+     * Called when an error occurs during WebSocket communication
+     * or message processing.
      *
      * Logs the error message for debugging and monitoring purposes.
      *
-     * @param exMessage the error message to be logged
+     * @param exMessage the error message describing the failure
      */
     public void onError(String exMessage) {
         System.err.println("WebSocket error: " + exMessage);
-    }
-
-    /**
-     * Returns the most recently received elevator state.
-     *
-     * @return the current elevator state, or null if no status has been received yet
-     */
-    public ElevatorState getElevatorState() {
-        return elevatorState;
     }
 }

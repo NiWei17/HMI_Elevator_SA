@@ -1,6 +1,7 @@
 package api.basic;
 
 import api.application.WebSocketHandler;
+import api.application.WebSocketSender;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
@@ -13,7 +14,8 @@ import java.net.URI;
  * as an adapter between the WebSocket protocol and the application's
  * message handling system.
  */
-public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
+public class WebSocketClient extends org.java_websocket.client.WebSocketClient
+        implements WebSocketSender {
 
     /** Handler for WebSocket events and messages */
     private final WebSocketHandler handler;
@@ -46,6 +48,7 @@ public class WebSocketClient extends org.java_websocket.client.WebSocketClient {
      *
      * @param message the message to be sent to the server
      */
+    @Override
     public void sendMessage(String message) {
         send(message);
     }
