@@ -37,7 +37,7 @@ public class StatePollingService {
      */
     public void requestState() {
         String jsonMessage =
-                JsonMessageFactory.createCommand("REQUEST_STATE");
+                JsonMessageFactory.createCommand("REQUEST_STATUS");
 
         sender.sendMessage(jsonMessage);
     }
